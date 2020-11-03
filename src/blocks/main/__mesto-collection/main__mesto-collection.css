@@ -1,0 +1,9 @@
+.main__mesto-collection {
+  margin-top: 51px;
+}
+
+@media (max-width: 425px) {
+  .main__mesto-collection {
+    margin-top: 36px;
+  }
+}
