@@ -2,7 +2,7 @@ import React from 'react';
 import api from '../utils/api';
 import Card from './Card';
 
-function Main({onEditProfile, onAddPlace, onEditAvatar}){
+function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}){
 
   const [userAvatar, setUserAvatar] = React.useState('');
   const [userName, setUserName] = React.useState('');
@@ -21,10 +21,11 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}){
           id: card._id,
           name: card.name,
           link: card.link,
-          likes: card.likes.length
+          likes: card.likes
         })))
       })
-  });
+      .catch((err)=> console.log(err));
+  }, []);
 
   return(
     <main className="main page__main">
@@ -39,9 +40,7 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}){
       </section>
       <section className="mesto-collection main__mesto-collection">
         <ul className="mesto-cards">
-          {
-            cards.map(({id, ...props})=> <Card {...props} key={id} />)
-          }
+          { cards.map((card)=> <Card card={card} key={card.id} onCardClick={onCardClick}/>) }
         </ul>
       </section>
     </main>

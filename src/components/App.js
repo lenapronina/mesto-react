@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
 import PopupWithForm from './PopupWithForm';
+import ImagePopup from './ImagePopup';
 
 function App() {
 
@@ -10,11 +11,11 @@ function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
 
-  // const [selectedCard, setSelectedCard]= React.useState('');
+  const [selectedCard, setSelectedCard]= React.useState(false);
 
-  // const handleCardClick=()=>{
-
-  // }
+  const handleCardClick=(e)=>{
+    setSelectedCard(e);
+  }
 
   const handleEditProfileClick = () => {
     setEditProfilePopupOpen(true);
@@ -32,6 +33,7 @@ function App() {
     setEditProfilePopupOpen(false);
     setEditAvatarPopupOpen(false);
     setAddPlacePopupOpen(false);
+    setSelectedCard(false);
   }
 
   return (
@@ -41,8 +43,13 @@ function App() {
         onEditProfile = {handleEditProfileClick}
         onEditAvatar = {handleEditAvatarClick}
         onAddPlace = {handleAddPlaceClick}
+        onCardClick = {handleCardClick}
       />
       <Footer />
+      <ImagePopup
+        card = {selectedCard}
+        onClose ={closeAllPopups}
+      />
       <PopupWithForm
         title="Редактировать профиль"
         formName = "profile-edit"
