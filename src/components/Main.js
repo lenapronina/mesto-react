@@ -44,10 +44,10 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}){
         <div className="profile__avatar" onClick={onEditAvatar} style={isLoading?{backgroundColor: `#cccccc`}:{ backgroundImage: `url(${userAvatar})` }} ></div>
         <div className="profile__info">
           <h1  className="profile__title">{isLoading? 'User' : userName}</h1>
-          <button className="profile__edit-button" onClick={onEditProfile}></button>
+          <button className="profile__edit-button" onClick={onEditProfile} />
           <p className="profile__subtitle">{isLoading? 'Description': userDescription}</p>
         </div>
-        <button className="profile__add-button" onClick={onAddPlace}></button>
+        <button className="profile__add-button" onClick={onAddPlace} />
       </section>
       <section className="mesto-collection main__mesto-collection">
         <ul className="mesto-cards">

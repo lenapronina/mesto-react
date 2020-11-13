@@ -9,11 +9,11 @@ function Card({card, onCardClick}){
   return (
     <li className="mesto-card">
       <img className="mesto-card__image" src={card.link} alt={card.name} onClick={handleClick}/>
-      <button className="mesto-card__trash"></button>
+      <button className="mesto-card__trash" />
       <div className="mesto-card__info">
         <h2 className="mesto-card__title">{card.name}</h2>
         <div className="mesto-card__like-group">
-          <button className="mesto-card__like-icon"></button>
+          <button className="mesto-card__like-icon" />
           <p className="mesto-card__like-number">{card.likes.length}</p>
         </div>
       </div>
