@@ -1,8 +1,13 @@
 {
   "name": "mesto-react",
   "version": "0.1.0",
+  "description" : "A social network with travellers photos",
   "private": true,
   "homepage": "https://lenapronina.github.io/mesto-react/",
+  "author": {
+    "name" : "Lena Pronina",
+    "email" : "emaya.lena@yandex.ru"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
