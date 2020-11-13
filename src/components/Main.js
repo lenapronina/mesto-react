@@ -4,30 +4,27 @@ import Card from './Card';
 
 import Loader from 'react-loader-spinner';
 
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+
 
 function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}){
 
-  const [userAvatar, setUserAvatar] = React.useState('');
-  const [userName, setUserName] = React.useState('');
-  const [userDescription, setUserDescription] = React.useState('');
+  const currentUserData = React.useContext(CurrentUserContext);
+
   const [cards, setCards] = React.useState([]);
 
-  const[isLoading, setIsLoading] =React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     // run Loader
     setIsLoading(true);
     //fetch profile and cards data
-    api.getAllInitialData()
-      .then((data) => {
-        const [ initialCardsList, userProfileData] = data;
-        //update data with server response
-        setUserAvatar(userProfileData.avatar);
-        setUserName(userProfileData.name);
-        setUserDescription(userProfileData.about);
+    api.getInitialCards()
+      .then((initialCardsList) => {
 
         setCards(initialCardsList.map((card)=>({
           id: card._id,
+          owner: card.owner,
           name: card.name,
           link: card.link,
           likes: card.likes
@@ -41,11 +38,11 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}){
   return(
     <main className="main page__main">
       <section className="profile">
-        <div className="profile__avatar" onClick={onEditAvatar} style={isLoading?{backgroundColor: `#cccccc`}:{ backgroundImage: `url(${userAvatar})` }} ></div>
+        <div className="profile__avatar" onClick={onEditAvatar} style={isLoading?{backgroundColor: `#cccccc`}:{ backgroundImage: `url(${currentUserData.avatar})` }} ></div>
         <div className="profile__info">
-          <h1  className="profile__title">{isLoading? 'User' : userName}</h1>
+          <h1  className="profile__title">{isLoading? 'User' : currentUserData.name}</h1>
           <button className="profile__edit-button" onClick={onEditProfile} />
-          <p className="profile__subtitle">{isLoading? 'Description': userDescription}</p>
+          <p className="profile__subtitle">{isLoading? 'Description':  currentUserData.about}</p>
         </div>
         <button className="profile__add-button" onClick={onAddPlace} />
       </section>
