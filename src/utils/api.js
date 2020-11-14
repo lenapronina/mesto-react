@@ -46,7 +46,7 @@ class Api {
       headers: this._headers,
       body: JSON.stringify({
         name: updatedData.name,
-        about: updatedData.job
+        about: updatedData.about
       })
     })
     .then(res => this._checkResStatus(res));

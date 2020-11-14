@@ -4,6 +4,7 @@ import Footer from './Footer';
 import Main from './Main';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import EditProfilePopup from './EditProfilePopup';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -13,7 +14,7 @@ function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
 
-const [currentUser, setCurrentUser] = React.useState('');
+  const [currentUser, setCurrentUser] = React.useState('');
 
   const [selectedCard, setSelectedCard]= React.useState(false);
 
@@ -29,6 +30,17 @@ const [currentUser, setCurrentUser] = React.useState('');
       })
       .catch((err)=> console.log(err));
   }, []);
+
+  const handleUpdateUser=(e)=>{
+
+
+    api.patchUpdatedUserInfo(e)
+      .then((updatedUserData)=> {
+        setCurrentUser(updatedUserData);
+        closeAllPopups();
+      })
+      .catch((err)=> console.log(err));
+  }
 
   const handleCardClick=(e)=>{
     setSelectedCard(e);
@@ -68,44 +80,12 @@ const [currentUser, setCurrentUser] = React.useState('');
           card={selectedCard}
           onClose={closeAllPopups}
         />
-        <PopupWithForm
-          title="Редактировать профиль"
-          formName="profile-edit"
+        <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
-          children={(
-            <form className="popup__form" id="form-edit" name="form-edit" method="POST" action="#" noValidate>
-              <div className="popup__field">
-                <input
-                  className="popup__input"
-                  name="name"
-                  id="name"
-                  placeholder="Введите имя"
-                  type="text"
-                  minLength="2"
-                  maxLength="40"
-                  required
-                />
-                <span className="popup__input-error" id="name-error"></span>
-              </div>
-              <div className="popup__field">
-                <input
-                  className="popup__input"
-                  name="job"
-                  id="job"
-                  placeholder="Введите род занятий"
-                  type="text"
-                  minLength="2"
-                  maxLength="200"
-                  required
-                />
-                <span className="popup__input-error" id="job-error"></span>
-              </div>
-              <button className="popup__submit-button" type="submit">Сохранить</button>
-            </form>
-          )}
+          onUpdateUser={handleUpdateUser}
         />
-        <PopupWithForm
+        {/* <PopupWithForm
           title="Обновить аватар"
           formName="avatar-update"
           isOpen={isEditAvatarPopupOpen}
@@ -126,8 +106,8 @@ const [currentUser, setCurrentUser] = React.useState('');
               <button className="popup__submit-button" type="submit">Сохранить</button>
             </form>
           )}
-        />
-        <PopupWithForm
+        /> */}
+        {/* <PopupWithForm
           title="Новое место"
           formName="add-card"
           isOpen={isAddPlacePopupOpen}
@@ -161,7 +141,7 @@ const [currentUser, setCurrentUser] = React.useState('');
               <button className="popup__submit-button" type="submit">Создать</button>
             </form>
           )}
-        />
+        /> */}
       </div>
     </CurrentUserContext.Provider>
   );
