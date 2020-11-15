@@ -5,6 +5,7 @@ import Main from './Main';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -37,6 +38,15 @@ function App() {
     api.patchUpdatedUserInfo(e)
       .then((updatedUserData)=> {
         setCurrentUser(updatedUserData);
+        closeAllPopups();
+      })
+      .catch((err)=> console.log(err));
+  }
+
+  const handleUpdateAvatar=(e)=>{
+    api.patchUserAvatar(e)
+      .then((updatedUserAvatar)=> {
+        setCurrentUser(updatedUserAvatar);
         closeAllPopups();
       })
       .catch((err)=> console.log(err));
@@ -84,6 +94,11 @@ function App() {
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
+        />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
         />
         {/* <PopupWithForm
           title="Обновить аватар"
