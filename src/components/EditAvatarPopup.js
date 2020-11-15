@@ -1,7 +1,6 @@
 import React from 'react';
 
 import PopupWithForm from './PopupWithForm';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Input from './Input';
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}){
