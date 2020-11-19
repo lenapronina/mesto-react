@@ -27,8 +27,8 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick, cards, onCa
             ? <Loader type="ThreeDots" color="#ffffff" height={60} width={60} style={{ margin: 'auto'}} />
             : cards.map((card)=>
             <Card
-              card={card}
               key={card._id}
+              card={card}
               onCardClick={onCardClick}
               onCardLike={onCardLike}
               onCardDelete={onCardDelete}

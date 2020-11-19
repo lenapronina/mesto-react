@@ -1,44 +1,78 @@
 import React from 'react';
 
 import PopupWithForm from './PopupWithForm';
-import Input from './Input';
+import PopupButton from './PopupButton';
 
-function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}){
+function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, values, setValues, errors, setErrors, handleChange, isLoading}){
 
-  let avatarRef = React.useRef('');
+  const avatarRef = React.useRef(null);
 
-  function handleInputChange(evt) {
-    avatarRef = evt
-  }
+  const [isActive, setIsActive]=React.useState(false);
 
-  function handleSubmit(e) {
+  React.useEffect(() => {
+
+    const arrEditAvatarValues = Array.from(Object.values(values.editAvatar));
+    const arrEditAvatarErrors = Array.from(Object.values(errors.editAvatar))
+
+    if (arrEditAvatarErrors.every(elem => elem === "") && arrEditAvatarValues.length !== 0) {
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+
+  }, [errors, values]);
+
+
+  const handleSubmit = (e) => {
+
     e.preventDefault();
 
     onUpdateAvatar({
-      avatar: avatarRef
+      avatar: avatarRef.current.value
     });
+
+    setValues({ ...values,  editAvatar: {}});
+    setErrors({...errors, editAvatar:{}});
   }
+
+  function handleClose(){
+    onClose()
+    setValues({ ...values,  editAvatar: {}});
+    setErrors({...errors, editAvatar:{}});
+  }
+
 
   return(
     <PopupWithForm
       title="Обновить аватар"
-      formName="form-editavatar"
+      formName="editAvatar"
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       onSubmit={handleSubmit}
     >
       <>
         <div className="popup__field">
-          <Input
+          <input
+            className={(isActive || values.editAvatar.avatar === ''|| values.editAvatar.avatar === undefined)? "popup__input" : "popup__input popup__input_type_error"}
             name="avatar"
-            value={avatarRef.current.value}
-            placeholder="Название"
+            ref={avatarRef}
+            value={values.editAvatar.avatar || ''}
+            placeholder="Ссылка на картинку"
             type="url"
-            handleChange={handleInputChange}
+            onChange={handleChange}
+            required
           />
-          <span className="popup__input-error" id="avatar-error"></span>
+          {errors.editAvatar.avatar && (
+            <span className="popup__input-error popup__input-error_active">{errors.editAvatar.avatar}</span>
+          )}
         </div>
-        <button className="popup__submit-button" type="submit">Сохранить</button>
+        <PopupButton
+          className="popup__submit-button"
+          text={isLoading? "Сохранение" : "Сохранить"}
+          type="submit"
+          isActive={isActive}
+          isLoading={isLoading}
+        />
       </>
     </PopupWithForm>
   )

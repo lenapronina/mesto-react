@@ -1,70 +1,107 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
-
+import PopupButton from './PopupButton';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import Input from './Input';
 
-function EditProfilePopup({isOpen, onClose, onChange, onUpdateUser}){
+function EditProfilePopup({isOpen, onClose, onUpdateUser, values, setValues, errors, setErrors, handleChange, isLoading}){
 
 
   const currentUserData = React.useContext(CurrentUserContext);
 
-  const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-
+  const [isActive, setIsActive]=React.useState(false);
 
   React.useEffect(() => {
-    setName(currentUserData.name);
-    setDescription(currentUserData.about);
+
+    setValues({ ...values,  editProfile: { ...values.editProfile,
+      user: currentUserData.name,
+      job:currentUserData.about
+    }});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserData]);
 
+  React.useEffect(() => {
+    const arrEditProfileValues = Array.from(Object.values(values.editProfile));
+    const arrEditProfileErrors = Array.from(Object.values(errors.editProfile))
 
-  function handleSubmit(e) {
-    // Запрещаем браузеру переходить по адресу формы
+    if (arrEditProfileErrors.every(elem => elem === "") && arrEditProfileValues.length !== 0) {
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+
+  }, [errors, values]);
+
+  function handleSubmitForm(e) {
+
     e.preventDefault();
 
-    // Передаём значения управляемых компонентов во внешний обработчик
     onUpdateUser({
-      name: name,
-      about: description,
+      name: values.editProfile.user,
+      about: values.editProfile.job,
     });
+
+    setValues({ ...values,  editProfile: {}});
+    setErrors({...errors, editProfile:{}});
+  }
+
+  function handleClose(){
+    onClose()
+    setValues({ ...values,  editProfile: { ...values.editProfile,
+      user: currentUserData.name,
+      job:currentUserData.about
+    }});
+    setErrors({...errors, editProfile:{}});
   }
 
   return (
     <PopupWithForm
       title="Редактировать профиль"
-      formName="form-edit"
+      formName="editProfile"
       isOpen={isOpen}
-      onClose={onClose}
-      onSubmit={handleSubmit}
+      onClose={handleClose}
+      onSubmit={handleSubmitForm}
     >
       <>
         <div className="popup__field">
-          <Input
-            name="name"
-            value={name|| ''}
+          <input
+            className={(isActive ||  values.editProfile.user !== 0)? "popup__input" : "popup__input popup__input_type_error"}
+            name="user"
+            value={values.editProfile.user|| ''}
             placeholder="Введите имя"
             type="text"
             minLength="2"
             maxLength="40"
-            handleChange={setName}
+            onChange={handleChange}
+            required
           />
-          <span className="popup__input-error" id="name-error"></span>
+          {errors.editProfile.user && (
+            <span className="popup__input-error popup__input-error_active">{errors.editProfile.user}</span>
+          )}
         </div>
         <div className="popup__field">
-          <Input
+          <input
+            className={(isActive || values.editProfile.job !== 0 )? "popup__input" : "popup__input popup__input_type_error"}
             name="job"
-            value={description|| ''}
+            value={values.editProfile.job|| ''}
             placeholder="Введите род занятий"
             type="text"
             minLength="2"
             maxLength="200"
-            handleChange={setDescription}
+            onChange={handleChange}
+            required
           />
-          <span className="popup__input-error" id="job-error"></span>
+          {errors.editProfile.job && (
+            <span className="popup__input-error popup__input-error_active">{errors.editProfile.job}</span>
+          )}
         </div>
-        <button className="popup__submit-button" type="submit">Сохранить</button>
+        <PopupButton
+          className="popup__submit-button"
+          text={isLoading? "Сохранение" : "Сохранить"}
+          type="submit"
+          isActive={isActive}
+          isLoading={isLoading}
+        />
       </>
     </PopupWithForm>
   )

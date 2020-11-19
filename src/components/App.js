@@ -25,6 +25,34 @@ function App() {
 
   const [cards, setCards] = React.useState([]);
 
+  const [values, setValues] = React.useState({
+    addCard: {},
+    editProfile: {},
+    editAvatar: {}
+  });
+  const [errors, setErrors] = React.useState({
+    addCard: {},
+    editProfile: {},
+    editAvatar: {}
+  });
+  const [isActive, setIsActive]=React.useState(false);
+
+  let inputlist = 0;
+  function handleChange(event){
+
+    setValues({ ...values,  [event.target.form.id]: { ...values[event.target.form.id],
+      [event.target.name]: event.target.value,
+    }
+
+    });
+    setErrors({...errors, [event.target.form.id]:{
+      ...errors[event.target.form.id],
+      [event.target.name]: event.target.validationMessage}
+    });
+
+    return inputlist = event.target.form.length
+  };
+
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -43,6 +71,7 @@ function App() {
       setCards(newCards);
     })
   }
+
   React.useEffect(() => {
     // run Loader
     setIsLoading(true);
@@ -76,35 +105,40 @@ function App() {
   }, []);
 
   const handleUpdateUser=(e)=>{
-
+    setIsLoading(true);
 
     api.patchUpdatedUserInfo(e)
       .then((updatedUserData)=> {
         setCurrentUser(updatedUserData);
+        setIsLoading(false);
         closeAllPopups();
       })
       .catch((err)=> console.log(err));
   }
 
   const handleUpdateAvatar=(e)=>{
+    setIsLoading(true);
     api.patchUserAvatar(e)
       .then((updatedUserAvatar)=> {
         setCurrentUser(updatedUserAvatar);
+        setIsLoading(false);
         closeAllPopups();
       })
       .catch((err)=> console.log(err));
   }
 
-  const handleAddPlaceSubmit =(e)=>{
+  const handleAddPlaceSubmit = (e) => {
+    setIsLoading(true);
     api.postNewCard(e)
       .then((newCard)=>{
         setCards([newCard, ...cards]);
+        setIsLoading(false);
         closeAllPopups();
       })
       .catch((err)=> console.log(err));
   }
 
-  const handleCardClick=(e)=>{
+  const handleCardClick = (e) => {
     setSelectedCard(e);
   }
 
@@ -150,16 +184,38 @@ function App() {
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
+          values={values}
+          errors={errors}
+          isActive={isActive}
+          handleChange={handleChange}
+          setIsActive = {setIsActive}
+          setValues={setValues}
+          setErrors={setErrors}
+          isLoading={isLoading}
         />
-        <EditAvatarPopup
+        {/* <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateAvatar}
-        />
+          values={values}
+          errors={errors}
+          handleChange={handleChange}
+          setIsActive = {setIsActive}
+          setValues={setValues}
+          setErrors={setErrors}
+          isLoading={isLoading}
+        /> */}
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
+          values={values}
+          errors={errors}
+          setValues={setValues}
+          setErrors={setErrors}
+          handleChange={handleChange}
+          isLoading={isLoading}
+          inputlist ={inputlist}
         />
       </div>
     </CurrentUserContext.Provider>

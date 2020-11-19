@@ -1,58 +1,108 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import PopupButton from './PopupButton';
 
 
-//import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import Input from './Input';
+function AddPlacePopup({
+  isOpen,
+  onClose,
+  onAddPlace,
+  values,
+  errors,
+  setValues,
+  setErrors,
+  handleChange,
+  isLoading,
+  inputlist
+}){
 
-function AddPlacePopup({isOpen, onClose, onAddPlace}){
+
+  const [isActive, setIsActive]=React.useState(false);
+
+  React.useEffect(() => {
 
 
-  const [placeName, setPlaceName] = React.useState('');
-  const [placeUrl, setPlaceUrl] = React.useState('');
+    const arrAddCardValues = Array.from(Object.values(values.addCard));
+    const arrAddCardErrors = Array.from(Object.values(errors.addCard));
+
+    const objAddCardErrors = values.addCard;
+
+
+    console.log(objAddCardErrors)
+    if (arrAddCardErrors.every(elem => elem === "") && arrAddCardValues.length === inputlist-1){
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+
+
+  }, [errors, values]);
 
   function handleSubmit(e) {
 
     e.preventDefault();
 
     onAddPlace({
-      name: placeName,
-      link: placeUrl,
+      name: values.addCard.placeName,
+      link: values.addCard.placeUrl,
     });
+
+    setValues({ ...values, addCard:{}});
+    setErrors({...errors, addCard:{}});
+  }
+
+  function handleClose(){
+    onClose()
+    setValues({ ...values,  addCard: {}});
+    setErrors({...errors, addCard:{}});
   }
 
   return (
     <PopupWithForm
       title="Новое место"
-      formName="form-addcard"
+      formName="addCard"
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       onSubmit={handleSubmit}
     >
       <>
         <div className="popup__field">
-          <Input
-            name="name"
-            value={placeName|| ''}
+          <input
+            className={(isActive)? "popup__input" : "popup__input popup__input_type_error"}
+            name="placeName"
+            value={values.addCard.placeName || ''}
             placeholder="Название"
             type="text"
             minLength="1"
             maxLength="30"
-            handleChange={setPlaceName}
+            onChange={handleChange}
+            required
           />
-          <span className="popup__input-error" id="place-name-error"></span>
+          {errors.addCard.placeName && (
+            <span className="popup__input-error popup__input-error_active">{errors.addCard.placeName}</span>
+          )}
         </div>
         <div className="popup__field">
-          <Input
-            name="link"
-            value={placeUrl|| ''}
+          <input
+            className={(isActive || values.addCard.placeUrl !== 0)? "popup__input" : "popup__input popup__input_type_error"}
+            name="placeUrl"
+            value={values.addCard.placeUrl || ''}
             placeholder="Ссылка на картинку"
             type="url"
-            handleChange={setPlaceUrl}
+            onChange={handleChange}
+            required
           />
-          <span className="popup__input-error" id="place-image-error"></span>
+          {errors.addCard.placeUrl && (
+            <span className="popup__input-error popup__input-error_active">{errors.addCard.placeUrl}</span>
+          )}
         </div>
-        <button className="popup__submit-button" type="submit">Создать</button>
+        <PopupButton
+          className="popup__submit-button"
+          text={isLoading? "Сохранение" : "Создать"}
+          type="submit"
+          isActive={isActive}
+          isLoading={isLoading}
+        />
       </>
     </PopupWithForm>
   )
