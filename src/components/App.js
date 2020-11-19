@@ -25,6 +25,7 @@ function App() {
 
   const [cards, setCards] = React.useState([]);
 
+
   const [values, setValues] = React.useState({
     addCard: {},
     editProfile: {},
@@ -35,9 +36,7 @@ function App() {
     editProfile: {},
     editAvatar: {}
   });
-  const [isActive, setIsActive]=React.useState(false);
 
-  let inputlist = 0;
   function handleChange(event){
 
     setValues({ ...values,  [event.target.form.id]: { ...values[event.target.form.id],
@@ -49,8 +48,6 @@ function App() {
       ...errors[event.target.form.id],
       [event.target.name]: event.target.validationMessage}
     });
-
-    return inputlist = event.target.form.length
   };
 
   function handleCardLike(card) {
@@ -161,6 +158,12 @@ function App() {
     setSelectedCard(false);
   }
 
+  const closeClickOverlayPopups = (e)=>{
+    if(e.target === e.currentTarget){
+      closeAllPopups()
+    }
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App page">
@@ -179,43 +182,43 @@ function App() {
         <ImagePopup
           card={selectedCard}
           onClose={closeAllPopups}
+          onOverlayClick={closeClickOverlayPopups}
         />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
+          onOverlayClick={closeClickOverlayPopups}
           onUpdateUser={handleUpdateUser}
           values={values}
           errors={errors}
-          isActive={isActive}
-          handleChange={handleChange}
-          setIsActive = {setIsActive}
           setValues={setValues}
           setErrors={setErrors}
+          handleChange={handleChange}
           isLoading={isLoading}
         />
-        {/* <EditAvatarPopup
+        <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
+          onOverlayClick={closeClickOverlayPopups}
           onUpdateAvatar={handleUpdateAvatar}
           values={values}
           errors={errors}
-          handleChange={handleChange}
-          setIsActive = {setIsActive}
           setValues={setValues}
           setErrors={setErrors}
+          handleChange={handleChange}
           isLoading={isLoading}
-        /> */}
+        />
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
+          onOverlayClick={closeClickOverlayPopups}
           values={values}
           errors={errors}
           setValues={setValues}
           setErrors={setErrors}
           handleChange={handleChange}
           isLoading={isLoading}
-          inputlist ={inputlist}
         />
       </div>
     </CurrentUserContext.Provider>

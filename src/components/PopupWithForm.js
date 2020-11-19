@@ -1,11 +1,23 @@
 import React from 'react';
 
-function PopupWithForm({title, formName, isOpen, onClose, onSubmit, children}){
+function PopupWithForm({
+    title,
+    formName,
+    isOpen,
+    onClose,
+    onOverlayClick,
+    onSubmit,
+    children })
+  {
 
   const popupOpened = isOpen ? 'popup_opened' : '';
 
   return(
-    <div className={`popup popup_type_${formName} ${popupOpened}`} id={formName}>
+    <div
+      className={`popup popup_type_${formName} ${popupOpened}`}
+      id={formName}
+      onClick={onOverlayClick}
+    >
       <div className="popup__container">
         <div className="popup__header">
           <h2 className="popup__title">{title}</h2>

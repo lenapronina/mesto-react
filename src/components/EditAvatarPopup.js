@@ -2,80 +2,109 @@ import React from 'react';
 
 import PopupWithForm from './PopupWithForm';
 import PopupButton from './PopupButton';
+import escapeKeyCode from '../utils/utils';
 
-function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, values, setValues, errors, setErrors, handleChange, isLoading}){
+function EditAvatarPopup({
+    isOpen,
+    onClose,
+    onUpdateAvatar,
+    onOverlayClick,
+    values,
+    errors,
+    setValues,
+    setErrors,
+    handleChange,
+    isLoading })
+  {
 
-  const avatarRef = React.useRef(null);
+    const avatarRef = React.useRef(null);
 
-  const [isActive, setIsActive]=React.useState(false);
+    const [isActive, setIsActive]=React.useState(false);
 
-  React.useEffect(() => {
+    const inputListLength = 1;
 
-    const arrEditAvatarValues = Array.from(Object.values(values.editAvatar));
-    const arrEditAvatarErrors = Array.from(Object.values(errors.editAvatar))
+    React.useEffect(() => {
 
-    if (arrEditAvatarErrors.every(elem => elem === "") && arrEditAvatarValues.length !== 0) {
-      setIsActive(true);
-    } else {
-      setIsActive(false);
+      const formValues =  Array.from(Object.values(values.editAvatar));
+      const formErrors = Array.from(Object.values(errors.editAvatar));
+
+      if(formErrors.every(elem => elem === "") && formValues.length === inputListLength) {
+        setIsActive(true);
+       } else {
+        setIsActive(false);
+      }
+
+    }, [errors, values]);
+
+
+    const handleSubmit = (e) => {
+
+      e.preventDefault();
+
+      onUpdateAvatar({
+        avatar: avatarRef.current.value
+      });
+
+      setValues({ ...values,  editAvatar: {}});
+      setErrors({...errors, editAvatar:{}});
     }
 
-  }, [errors, values]);
+    function handleClose(){
+      onClose();
+      setValues({ ...values,  editAvatar: {}});
+      setErrors({...errors, editAvatar:{}});
+    }
 
+    function handleKeyDown(event){
+      if(isOpen && event.keyCode ===escapeKeyCode){
+        onClose();
+      }
+    };
 
-  const handleSubmit = (e) => {
+    React.useEffect(() => {
+      document.addEventListener('keydown', handleKeyDown);
 
-    e.preventDefault();
-
-    onUpdateAvatar({
-      avatar: avatarRef.current.value
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     });
 
-    setValues({ ...values,  editAvatar: {}});
-    setErrors({...errors, editAvatar:{}});
-  }
 
-  function handleClose(){
-    onClose()
-    setValues({ ...values,  editAvatar: {}});
-    setErrors({...errors, editAvatar:{}});
-  }
-
-
-  return(
-    <PopupWithForm
-      title="Обновить аватар"
-      formName="editAvatar"
-      isOpen={isOpen}
-      onClose={handleClose}
-      onSubmit={handleSubmit}
-    >
-      <>
-        <div className="popup__field">
-          <input
-            className={(isActive || values.editAvatar.avatar === ''|| values.editAvatar.avatar === undefined)? "popup__input" : "popup__input popup__input_type_error"}
-            name="avatar"
-            ref={avatarRef}
-            value={values.editAvatar.avatar || ''}
-            placeholder="Ссылка на картинку"
-            type="url"
-            onChange={handleChange}
-            required
+    return(
+      <PopupWithForm
+        title="Обновить аватар"
+        formName="editAvatar"
+        isOpen={isOpen}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
+        onOverlayClick={onOverlayClick}
+      >
+        <>
+          <div className="popup__field">
+            <input
+              className={(isActive || values.editAvatar.avatar === ''|| values.editAvatar.avatar === undefined)? "popup__input" : "popup__input popup__input_type_error"}
+              name="avatar"
+              ref={avatarRef}
+              value={values.editAvatar.avatar || ''}
+              placeholder="Ссылка на картинку"
+              type="url"
+              onChange={handleChange}
+              required
+            />
+            {errors.editAvatar.avatar && (
+              <span className="popup__input-error popup__input-error_active">{errors.editAvatar.avatar}</span>
+            )}
+          </div>
+          <PopupButton
+            className="popup__submit-button"
+            text={isLoading? "Сохранение" : "Сохранить"}
+            type="submit"
+            isActive={isActive}
+            isLoading={isLoading}
           />
-          {errors.editAvatar.avatar && (
-            <span className="popup__input-error popup__input-error_active">{errors.editAvatar.avatar}</span>
-          )}
-        </div>
-        <PopupButton
-          className="popup__submit-button"
-          text={isLoading? "Сохранение" : "Сохранить"}
-          type="submit"
-          isActive={isActive}
-          isLoading={isLoading}
-        />
-      </>
-    </PopupWithForm>
-  )
+        </>
+      </PopupWithForm>
+    )
 }
 
 export default EditAvatarPopup;
