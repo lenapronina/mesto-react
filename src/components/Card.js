@@ -2,7 +2,7 @@ import React from 'react';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function Card({card, onCardClick, onCardLike, onCardDelete}){
+function Card({card, onCardClick, onCardLike, onDeleteButtonClick}){
 
   const currentUserData = React.useContext(CurrentUserContext);
 
@@ -28,14 +28,14 @@ function Card({card, onCardClick, onCardLike, onCardDelete}){
     onCardLike(card);
   }
 
-  function handleDelete() {
-    onCardDelete(card);
+  function clickI(){
+    onDeleteButtonClick(card)
   }
 
   return (
     <li className="mesto-card">
       <img className="mesto-card__image" src={card.link} alt={card.name} onClick={handleClick}/>
-      <button className={cardDeleteButtonClassName} onClick={handleDelete}/>
+      <button className={cardDeleteButtonClassName} onClick={clickI}/>
       <div className="mesto-card__info">
         <h2 className="mesto-card__title">{card.name}</h2>
         <div className="mesto-card__like-group">

@@ -6,6 +6,7 @@ import Main from './Main';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
+import DeleteCardPopup from './DeleteCardPopup';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import AddPlacePopup from './AddPlacePopup';
@@ -15,11 +16,12 @@ function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
+  const [isDeleteCardPopupOpen, setDeleteCardPopupOpen] = React.useState(false);
 
   const [currentUser, setCurrentUser] = React.useState('');
 
   const [selectedCard, setSelectedCard]= React.useState(false);
-
+  const [card, setCard] = React.useState({});
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -63,9 +65,14 @@ function App() {
   }
 
   function handleCardDelete(card){
+
+    setIsLoading(true);
+
     api.deleteCard(card._id).then(()=>{
       const newCards = cards.filter((c) => c._id !== card._id);
       setCards(newCards);
+      setIsLoading(false);
+      closeAllPopups();
     })
   }
 
@@ -147,6 +154,12 @@ function App() {
     setEditAvatarPopupOpen(true);
   }
 
+  function handleDeleteButtonClick(card){
+
+    setDeleteCardPopupOpen(true);
+    setCard(card);
+  }
+
   const handleAddPlaceClick = () => {
     setAddPlacePopupOpen(true);
   }
@@ -155,6 +168,7 @@ function App() {
     setEditProfilePopupOpen(false);
     setEditAvatarPopupOpen(false);
     setAddPlacePopupOpen(false);
+    setDeleteCardPopupOpen(false);
     setSelectedCard(false);
   }
 
@@ -175,7 +189,7 @@ function App() {
           onCardClick={handleCardClick}
           cards={cards}
           onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
+          onDeleteButtonClick={handleDeleteButtonClick}
           isLoading={isLoading}
         />
         <Footer />
@@ -183,6 +197,14 @@ function App() {
           card={selectedCard}
           onClose={closeAllPopups}
           onOverlayClick={closeClickOverlayPopups}
+        />
+        <DeleteCardPopup
+          card={card}
+          isOpen={isDeleteCardPopupOpen}
+          onClose={closeAllPopups}
+          onOverlayClick={closeClickOverlayPopups}
+          onCardDelete={handleCardDelete}
+          isLoading={isLoading}
         />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}

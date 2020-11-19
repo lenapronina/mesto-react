@@ -6,7 +6,7 @@ import Loader from 'react-loader-spinner';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
-function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick, cards, onCardLike, onCardDelete, isLoading}){
+function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick, cards, onCardLike, onDeleteButtonClick, isLoading}){
 
   const currentUserData = React.useContext(CurrentUserContext);
 
@@ -31,7 +31,7 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick, cards, onCa
               card={card}
               onCardClick={onCardClick}
               onCardLike={onCardLike}
-              onCardDelete={onCardDelete}
+              onDeleteButtonClick={onDeleteButtonClick}
             />)
           }
         </ul>
