@@ -13,21 +13,26 @@ import AddPlacePopup from './AddPlacePopup';
 
 function App() {
 
+  // set useState for CurrentUserContext
+  const [currentUser, setCurrentUser] = React.useState('');
+
+  // useStates for manage popups opening
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
   const [isDeleteCardPopupOpen, setDeleteCardPopupOpen] = React.useState(false);
 
-  const [currentUser, setCurrentUser] = React.useState('');
-
+  // states for updating  card by click card for delete and show in image viewer
   const [selectedCard, setSelectedCard]= React.useState(false);
   const [card, setCard] = React.useState({});
 
-  const [isLoading, setIsLoading] = React.useState(false);
-
+  // states for updating card list
   const [cards, setCards] = React.useState([]);
 
+  // states for updating and styling loading proccess
+  const [isLoading, setIsLoading] = React.useState(false);
 
+  // states for collecting all forms values and validation errors
   const [values, setValues] = React.useState({
     addCard: {},
     editProfile: {},
@@ -38,43 +43,6 @@ function App() {
     editProfile: {},
     editAvatar: {}
   });
-
-  function handleChange(event){
-
-    setValues({ ...values,  [event.target.form.id]: { ...values[event.target.form.id],
-      [event.target.name]: event.target.value,
-    }
-
-    });
-    setErrors({...errors, [event.target.form.id]:{
-      ...errors[event.target.form.id],
-      [event.target.name]: event.target.validationMessage}
-    });
-  };
-
-  function handleCardLike(card) {
-    // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
-
-    //Отправляем запрос в API и получаем обновлённые данные карточки
-    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-      const newCards = cards.map((c) => c._id === card._id ? newCard : c);
-      setCards(newCards);
-
-    });
-  }
-
-  function handleCardDelete(card){
-
-    setIsLoading(true);
-
-    api.deleteCard(card._id).then(()=>{
-      const newCards = cards.filter((c) => c._id !== card._id);
-      setCards(newCards);
-      setIsLoading(false);
-      closeAllPopups();
-    })
-  }
 
   React.useEffect(() => {
     // run Loader
@@ -96,8 +64,8 @@ function App() {
       .catch((err)=> console.log(err));
   }, []);
 
-  React.useEffect(() => {
 
+  React.useEffect(() => {
     //fetch profile and cards data
     api.getUserInfo()
       .then((userProfileData) => {
@@ -108,11 +76,51 @@ function App() {
       .catch((err)=> console.log(err));
   }, []);
 
-  const handleUpdateUser=(e)=>{
+  function handleChange(event){
+    setValues({ ...values,  [event.target.form.id]: { ...values[event.target.form.id],
+      [event.target.name]: event.target.value,
+    }
+
+    });
+    setErrors({...errors, [event.target.form.id]:{
+      ...errors[event.target.form.id],
+      [event.target.name]: event.target.validationMessage}
+    });
+  };
+
+  function handleCardLike(card) {
+    // check if card has already have a like
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+
+    api.changeLikeCardStatus(card._id, isLiked)
+      .then((newCard) => {
+        //create new cardList replacing liked/disliked card
+        const newCards = cards.map((c) => c._id === card._id ? newCard : c);
+        setCards(newCards)
+      })
+      .catch((err)=> console.log(err));
+  }
+
+  function handleCardDelete(card){
+    setIsLoading(true);
+
+    api.deleteCard(card._id)
+      .then(()=>{
+        //create new cardList removing card with certain id
+        const newCards = cards.filter((c) => c._id !== card._id);
+        setCards(newCards);
+        setIsLoading(false);
+        closeAllPopups();
+      })
+      .catch((err)=> console.log(err));
+  }
+
+  function handleUpdateUser(e){
     setIsLoading(true);
 
     api.patchUpdatedUserInfo(e)
       .then((updatedUserData)=> {
+        // update user info avatar with new data
         setCurrentUser(updatedUserData);
         setIsLoading(false);
         closeAllPopups();
@@ -120,10 +128,11 @@ function App() {
       .catch((err)=> console.log(err));
   }
 
-  const handleUpdateAvatar=(e)=>{
+  function handleUpdateAvatar(e){
     setIsLoading(true);
     api.patchUserAvatar(e)
       .then((updatedUserAvatar)=> {
+        // update user avatar with new data
         setCurrentUser(updatedUserAvatar);
         setIsLoading(false);
         closeAllPopups();
@@ -131,10 +140,11 @@ function App() {
       .catch((err)=> console.log(err));
   }
 
-  const handleAddPlaceSubmit = (e) => {
+  function handleAddPlaceSubmit(e){
     setIsLoading(true);
     api.postNewCard(e)
       .then((newCard)=>{
+        // add new card to card list
         setCards([newCard, ...cards]);
         setIsLoading(false);
         closeAllPopups();
@@ -142,29 +152,30 @@ function App() {
       .catch((err)=> console.log(err));
   }
 
-  const handleCardClick = (e) => {
+  function handleCardClick(e){
     setSelectedCard(e);
   }
 
-  const handleEditProfileClick = () => {
+  //open popups
+  function handleEditProfileClick(){
     setEditProfilePopupOpen(true);
   }
 
-  const handleEditAvatarClick = () => {
+  function handleEditAvatarClick(){
     setEditAvatarPopupOpen(true);
   }
 
-  function handleDeleteButtonClick(card){
+  function handleAddPlaceClick(){
+    setAddPlacePopupOpen(true);
+  }
 
+  function handleDeleteButtonClick(card){
     setDeleteCardPopupOpen(true);
     setCard(card);
   }
 
-  const handleAddPlaceClick = () => {
-    setAddPlacePopupOpen(true);
-  }
-
-  const closeAllPopups = () => {
+  //close popups
+  function closeAllPopups(){
     setEditProfilePopupOpen(false);
     setEditAvatarPopupOpen(false);
     setAddPlacePopupOpen(false);
@@ -172,13 +183,15 @@ function App() {
     setSelectedCard(false);
   }
 
-  const closeClickOverlayPopups = (e)=>{
+  // close popup by clicking on overlay
+  function closeClickOverlayPopups(e){
     if(e.target === e.currentTarget){
-      closeAllPopups()
+      closeAllPopups();
     }
   }
 
   return (
+    //Add proveider to all components
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App page">
         <Header />

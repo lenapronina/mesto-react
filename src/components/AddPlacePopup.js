@@ -16,7 +16,10 @@ function AddPlacePopup({
     isLoading })
   {
 
+    //state for validation form
     const [isActive, setIsActive]= React.useState(false);
+
+    // inputs count in this popup
     const inputListLength = 2;
 
     React.useEffect(() => {
@@ -24,6 +27,7 @@ function AddPlacePopup({
       const formValues =  Array.from(Object.values(values.addCard));
       const formErrors = Array.from(Object.values(errors.addCard));
 
+      //set isActive state true for all filled inputs without errors
        if(formErrors.every(elem => elem === "") && formValues.length === inputListLength) {
          setIsActive(true);
        } else {
@@ -54,6 +58,8 @@ function AddPlacePopup({
     function handleKeyDown(event){
       if(isOpen && event.keyCode === escapeKeyCode){
         onClose();
+        setValues({ ...values,  addCard: {}});
+        setErrors({...errors, addCard:{}});
       }
     };
 
@@ -107,7 +113,7 @@ function AddPlacePopup({
           </div>
           <PopupButton
             className="popup__submit-button"
-            text={isLoading? "Сохранение" : "Создать"}
+            text={isLoading? "Сохранение..." : "Создать"}
             type="submit"
             isActive={isActive}
             isLoading={isLoading}

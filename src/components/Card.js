@@ -4,20 +4,20 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Card({card, onCardClick, onCardLike, onDeleteButtonClick}){
 
+  // Assign CurrentUserContext
   const currentUserData = React.useContext(CurrentUserContext);
 
+  // compare card id and card owner id
   const isOwn = (card.owner._id === currentUserData._id);
-
-  const cardDeleteButtonClassName = (
-    `mesto-card__trash ${isOwn ? '' : 'mesto-card__trash_hidden'}`
-  );
-
-
+  // check if card has already have a like
   const isLiked = card.likes.some(i => i._id === currentUserData._id);
 
-  // Создаём переменную, которую после зададим в `className` для кнопки лайка
+  // variables for styling elements
   const cardLikeButtonClassName = (
     `mesto-card__like-icon ${isLiked ? 'mesto-card__like-icon_active' : ''}`
+  );
+  const cardDeleteButtonClassName = (
+    `mesto-card__trash ${isOwn ? '' : 'mesto-card__trash_hidden'}`
   );
 
   function handleClick() {
@@ -29,7 +29,7 @@ function Card({card, onCardClick, onCardLike, onDeleteButtonClick}){
   }
 
   function clickI(){
-    onDeleteButtonClick(card)
+    onDeleteButtonClick(card);
   }
 
   return (

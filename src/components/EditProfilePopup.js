@@ -18,10 +18,11 @@ function EditProfilePopup({
     isLoading })
   {
 
+    // assign CurrentUserContext
     const currentUserData = React.useContext(CurrentUserContext);
-
+    //state for validation form
     const [isActive, setIsActive]=React.useState(false);
-
+    // inputs count in this popup
     const inputListLength = 2;
 
     React.useEffect(() => {
@@ -38,6 +39,7 @@ function EditProfilePopup({
       const formValues =  Array.from(Object.values(values.editProfile));
       const formErrors = Array.from(Object.values(errors.editProfile));
 
+      //set isActive state true for all filled inputs without errors
        if(formErrors.every(elem => elem === "") && formValues.length === inputListLength) {
          setIsActive(true);
        } else {
@@ -125,7 +127,7 @@ function EditProfilePopup({
           </div>
           <PopupButton
             className="popup__submit-button"
-            text={isLoading? "Сохранение" : "Сохранить"}
+            text={isLoading? "Сохранение..." : "Сохранить"}
             type="submit"
             isActive={isActive}
             isLoading={isLoading}

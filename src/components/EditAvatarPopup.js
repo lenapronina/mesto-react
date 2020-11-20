@@ -19,15 +19,17 @@ function EditAvatarPopup({
 
     const avatarRef = React.useRef(null);
 
+    //state for validation form
     const [isActive, setIsActive]=React.useState(false);
 
+    // inputs count in this popup
     const inputListLength = 1;
 
     React.useEffect(() => {
 
       const formValues =  Array.from(Object.values(values.editAvatar));
       const formErrors = Array.from(Object.values(errors.editAvatar));
-
+      //set isActive state true for all filled inputs without errors
       if(formErrors.every(elem => elem === "") && formValues.length === inputListLength) {
         setIsActive(true);
        } else {
@@ -97,7 +99,7 @@ function EditAvatarPopup({
           </div>
           <PopupButton
             className="popup__submit-button"
-            text={isLoading? "Сохранение" : "Сохранить"}
+            text={isLoading? "Сохранение..." : "Сохранить"}
             type="submit"
             isActive={isActive}
             isLoading={isLoading}
