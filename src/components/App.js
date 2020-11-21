@@ -109,10 +109,10 @@ function App() {
         //create new cardList removing card with certain id
         const newCards = cards.filter((c) => c._id !== card._id);
         setCards(newCards);
-        setIsLoading(false);
         closeAllPopups();
       })
-      .catch((err)=> console.log(err));
+      .catch((err)=> console.log(err))
+      .finally(()=> setIsLoading(false));
   }
 
   function handleUpdateUser(e){
@@ -122,10 +122,11 @@ function App() {
       .then((updatedUserData)=> {
         // update user info avatar with new data
         setCurrentUser(updatedUserData);
-        setIsLoading(false);
+
         closeAllPopups();
       })
-      .catch((err)=> console.log(err));
+      .catch((err)=> console.log(err))
+      .finally(()=> setIsLoading(false));
   }
 
   function handleUpdateAvatar(e){
@@ -134,10 +135,10 @@ function App() {
       .then((updatedUserAvatar)=> {
         // update user avatar with new data
         setCurrentUser(updatedUserAvatar);
-        setIsLoading(false);
         closeAllPopups();
       })
-      .catch((err)=> console.log(err));
+      .catch((err)=> console.log(err))
+      .finally(()=> setIsLoading(false));
   }
 
   function handleAddPlaceSubmit(e){
@@ -146,10 +147,10 @@ function App() {
       .then((newCard)=>{
         // add new card to card list
         setCards([newCard, ...cards]);
-        setIsLoading(false);
         closeAllPopups();
       })
-      .catch((err)=> console.log(err));
+      .catch((err)=> console.log(err))
+      .finally(()=> setIsLoading(false));
   }
 
   function handleCardClick(e){
